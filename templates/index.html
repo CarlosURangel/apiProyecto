@@ -1,0 +1,93 @@
+
+<form id="transactionsForm">
+    <input type="number" id="phone" name="phone" placeholder="Número de teléfono" required>
+
+    <label>
+        <input type="radio" id="amount_20" name="amount" value="20">
+        $20
+    </label><br>
+
+    <label>
+        <input type="radio" id="amount_30" name="amount" value="30">
+        $30
+    </label><br>
+
+    <label>
+        <input type="radio" id="amount_50" name="amount" value="50">
+        $50
+    </label><br>
+
+    <label>
+        <input type="radio" id="amount_100" name="amount" value="100">
+        $100
+    </label><br>
+
+    <label>
+        <input type="radio" id="amount_200" name="amount" value="200">
+        $200
+    </label><br>
+
+    <label>
+        <input type="radio" id="telcel" name="company" value="telcel" required>
+        Telcel
+    </label><br>
+
+    <label>
+        <input type="radio" id="dalefon" name="company" value="dalefon" required>
+        Dalefon
+    </label><br>
+
+    <label>
+        <input type="radio" id="bait" name="company" value="bait" required>
+        Bait
+    </label><br>
+
+    <button type="submit">Aceptar</button>
+</form>
+
+<script>
+    document.getElementById('transactionsForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Obtener valores del formulario
+        const phone = document.getElementById('phone').value.trim();
+        const amount = document.querySelector('input[name="amount"]:checked')?.value;
+        const company = document.querySelector('input[name="company"]:checked')?.value;
+
+        if (!phone || !amount || !company) {
+            alert('Por favor completa todos los campos.');
+            return;
+        }
+
+        // Validar el número de teléfono
+        if (!/^\d{10}$/.test(phone)) {
+            alert('El número de teléfono debe tener 10 dígitos.');
+            return;
+        }
+
+        // Endpoint unificado para todas las compañías
+        const apiUrl = '/new';
+
+        // Realizar la solicitud POST al servidor
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                phone_number: phone,
+                amount: parseFloat(amount),
+                company: company
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Error en la transacción');
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            alert(`¡Transacción exitosa! ID: ${data.transaction_id}`);
+        })
+        .catch(error => alert(`Error: ${error.message}`));
+    });
+</script>

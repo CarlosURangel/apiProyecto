@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+
+<div>
+    {% for transaction in transactions %}
+
+    <div>
+        <p>{{transaction.id}}</p>
+        <h5>{{transaction.phone_number}}</h5>
+        <p>{{transaction.amount}}</p>
+        <p>{{transaction.timestamp}}</p>
+        <a href="{{url_for('transactions.delete', id=transaction.id)}}">Eliminar</a>
+
+    </div>
+
+    {% endfor %}
+</div>
+
+{% endblock %}
